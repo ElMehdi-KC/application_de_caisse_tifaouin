@@ -221,14 +221,12 @@
         </section>
 
         <!-- ================= PAGE INVENTAIRE & STOCK ================= -->
-
         <section id="page-inventory" class="hidden space-y-6">
             <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/40 flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <h2 class="text-xl font-extrabold text-stone-900">Gestion de l'Inventaire & Prix</h2>
                     <p class="text-sm text-stone-700 font-medium">Mettez à jour le stock, ajustez les prix de vente ou importez des données via Excel.</p>
                 </div>
-                <!-- BOUTONS AJOUTÉS DANS LA ZONE ROUGE -->
                 <div class="flex flex-wrap items-center gap-3">
                     <button onclick="openAddProductModal()" class="bg-[#c85a32] hover:bg-[#a84624] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Ajouter Produit
@@ -373,6 +371,51 @@
         </div>
     </div>
 
+    <!-- MODAL AJOUT MANUEL PRODUIT -->
+    <div id="add-product-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-stone-200">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold text-[#2a1810] flex items-center gap-2">
+                    <i class="fa-solid fa-box-open text-[#c85a32]"></i> Nouveau Produit
+                </h3>
+                <button onclick="closeAddProductModal()" class="text-stone-400 hover:text-stone-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="handleManualAddProduct(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Code ID</label>
+                    <input type="text" id="new-prod-id" required placeholder="Ex: CAF-LAT-10" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Nom du Produit</label>
+                    <input type="text" id="new-prod-name" required placeholder="Ex: Thé à la Menthe" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Catégorie</label>
+                    <input type="text" id="new-prod-cat" required placeholder="Ex: Boissons - Cafés" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Achat (MAD)</label>
+                        <input type="number" step="0.01" id="new-prod-cost" required placeholder="10.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Vente (MAD)</label>
+                        <input type="number" step="0.01" id="new-prod-sale" required placeholder="25.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Stock Initial</label>
+                    <input type="number" id="new-prod-stock" required placeholder="50" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <button type="submit" class="w-full bg-[#c85a32] hover:bg-[#a84624] text-white font-bold py-3 rounded-xl transition shadow mt-3 text-sm">
+                    Enregistrer le Produit
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- App JavaScript Logic -->
     <script>
         const USERS = {
@@ -441,6 +484,7 @@
                 currentUser = { name: username, role: USERS[username].role };
                 document.getElementById('login-modal').classList.add('hidden');
                 document.getElementById('login-password').value = '';
+                document.getElementById('login-error').classList.add('hidden');
                 document.getElementById('current-user-display').innerText = currentUser.name;
                 document.getElementById('current-role-display').innerText = currentUser.role;
                 document.getElementById('cart-server').value = currentUser.name;
@@ -502,8 +546,7 @@
             }
         }
 
-    
-    /* --- SOUVENIRS FUNCTIONS --- */
+        /* --- SOUVENIRS FUNCTIONS --- */
         function renderMemories() {
             const container = document.getElementById('memories-grid');
             if (!memories || memories.length === 0) {
@@ -698,11 +741,17 @@
 
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
-            if (!product || product.stock <= 0) return;
+            if (!product || product.stock <= 0) {
+                alert("Produit épuisé !");
+                return;
+            }
 
             const existing = cart.find(item => item.id === productId);
             if (existing) {
-                if (existing.qty + 1 > product.stock) return;
+                if (existing.qty + 1 > product.stock) {
+                    alert("Stock maximal atteint pour ce produit !");
+                    return;
+                }
                 existing.qty++;
             } else {
                 cart.push({ id: product.id, name: product.name, price: product.salePrice, qty: 1 });
@@ -712,7 +761,14 @@
 
         function updateCartQty(productId, delta) {
             const item = cart.find(i => i.id === productId);
+            const product = products.find(p => p.id === productId);
             if (!item) return;
+
+            if (delta > 0 && product && (item.qty + delta > product.stock)) {
+                alert("Stock insuffisant !");
+                return;
+            }
+
             item.qty += delta;
             if (item.qty <= 0) cart = cart.filter(i => i.id !== productId);
             renderCart();
@@ -962,6 +1018,11 @@
 
         /* --- FONCTION DE MODIFICATION DE COMMANDE --- */
         function editOrder(orderId) {
+            if (!currentUser || currentUser.role !== 'patron') {
+                alert("Accès réservé au patron.");
+                return;
+            }
+
             const order = sales.find(s => s.id === orderId);
             if (!order) return;
 
@@ -1012,7 +1073,7 @@
             document.getElementById('kpi-avg').innerText = (data.length > 0 ? totalCA / data.length : 0).toFixed(2) + " MAD";
         }
 
-/* --- FONCTIONS D'AJOUT MANUEL ET EXCEL DE PRODUITS --- */
+        /* --- FONCTIONS D'AJOUT MANUEL ET EXCEL DE PRODUITS --- */
         function openAddProductModal() {
             document.getElementById('add-product-modal').classList.remove('hidden');
         }
@@ -1064,23 +1125,36 @@
             let importedCount = 0;
 
             rows.forEach(row => {
-                // Lecture avec prise en compte du format exact de votre catalogue Excel
+                // 1. Récupération robuste des données avec gestion des clés
                 const id = String(
                     row.ID_Produit || row.ID || row.Code || row.id || 
                     `PROD-${Date.now()}-${Math.floor(Math.random()*100)}`
-                );
-                const name = row.Nom_Produit || row.Produit || row.Nom || row.name || "Produit sans nom";
-                const category = row.Categorie || row.Category || row.category || "Général";
-                const costPrice = parseFloat(row.Prix_Achat_MAD || row.PrixAchat || row.costPrice || 0);
-                const salePrice = parseFloat(row.Prix_Vente_MAD || row.PrixVente || row.salePrice || 0);
-                const stock = parseInt(row.Stock_Initial || row.Stock || row.stock || 0);
+                ).trim();
+
+                const name = String(row.Nom_Produit || row.Produit || row.Nom || row.name || "Produit sans nom").trim();
+                const category = String(row.Categorie || row.Category || row.category || "Général").trim();
+
+                // 2. Conversion sécurisée des prix et du stock
+                const parseNumber = (val) => {
+                    if (val === undefined || val === null) return 0;
+                    if (typeof val === 'number') return val;
+                    const cleaned = String(val).replace(',', '.').replace(/[^0-9.-]/g, '');
+                    return parseFloat(cleaned) || 0;
+                };
+
+                const costPrice = parseNumber(row.Prix_Achat_MAD || row.PrixAchat || row.costPrice);
+                const salePrice = parseNumber(row.Prix_Vente_MAD || row.PrixVente || row.salePrice);
+                const stock = parseInt(parseNumber(row.Stock_Initial || row.Stock || row.stock)) || 0;
                 
-                // Image : conserve l'image par défaut si c'est un nom de fichier local au lieu d'une URL
+                // 3. Prise en compte des images locales ou liens HTTP
                 let image = "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400";
-                if (row.Lien_Image_Catalogue && String(row.Lien_Image_Catalogue).startsWith('http')) {
-                    image = row.Lien_Image_Catalogue;
+                const imgCol = row.Lien_Image_Catalogue || row.Image || row.image;
+                
+                if (imgCol && String(imgCol).trim() !== "") {
+                    image = String(imgCol).trim();
                 }
 
+                // 4. Mise à jour ou insertion dans le catalogue
                 const existingIndex = products.findIndex(p => p.id === id);
                 if (existingIndex !== -1) {
                     products[existingIndex] = { ...products[existingIndex], name, category, costPrice, salePrice, stock, image };
@@ -1090,6 +1164,7 @@
                 importedCount++;
             });
 
+            // Sauvegarde et rafraîchissement
             localStorage.setItem('tifaouin_products', JSON.stringify(products));
             renderCategories();
             renderProducts();
@@ -1104,51 +1179,5 @@
     event.target.value = '';
 }
     </script>
-
-<!-- MODAL AJOUT MANUEL PRODUIT -->
-    <div id="add-product-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-stone-200">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold text-[#2a1810] flex items-center gap-2">
-                    <i class="fa-solid fa-box-open text-[#c85a32]"></i> Nouveau Produit
-                </h3>
-                <button onclick="closeAddProductModal()" class="text-stone-400 hover:text-stone-600">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            <form onsubmit="handleManualAddProduct(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">Code ID</label>
-                    <input type="text" id="new-prod-id" required placeholder="Ex: CAF-LAT-10" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">Nom du Produit</label>
-                    <input type="text" id="new-prod-name" required placeholder="Ex: Thé à la Menthe" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">Catégorie</label>
-                    <input type="text" id="new-prod-cat" required placeholder="Ex: Boissons - Cafés" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Achat (MAD)</label>
-                        <input type="number" step="0.01" id="new-prod-cost" required placeholder="10.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Vente (MAD)</label>
-                        <input type="number" step="0.01" id="new-prod-sale" required placeholder="25.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">Stock Initial</label>
-                    <input type="number" id="new-prod-stock" required placeholder="50" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
-                </div>
-                <button type="submit" class="w-full bg-[#c85a32] hover:bg-[#a84624] text-white font-bold py-3 rounded-xl transition shadow mt-3 text-sm">
-                    Enregistrer le Produit
-                </button>
-            </form>
-        </div>
-    </div>
-
 </body>
 </html>
