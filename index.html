@@ -20,6 +20,13 @@
             background-position: center;
             background-attachment: fixed;
         }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="bg-custom-overlay text-slate-800 font-sans min-h-screen flex flex-col">
@@ -61,7 +68,6 @@
     <header class="bg-[#2a1810] text-amber-100 shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
             
-            <!-- Logo & Slogan -->
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-full bg-[#c85a32] flex items-center justify-center text-white shadow-inner">
                     <i class="fa-solid fa-mug-hot text-xl"></i>
@@ -72,7 +78,6 @@
                 </div>
             </div>
             
-            <!-- Navigation Tabs -->
             <nav class="flex space-x-1 bg-[#1d100b] p-1 rounded-xl">
                 <button onclick="switchTab('pos')" id="tab-pos" class="px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md">
                     <i class="fa-solid fa-cash-register"></i> Caisse & Commande
@@ -88,7 +93,6 @@
                 </button>
             </nav>
 
-            <!-- Current User & Logout -->
             <div class="flex items-center gap-3">
                 <div class="text-right">
                     <p id="current-user-display" class="text-xs font-bold text-white">Non connecté</p>
@@ -106,11 +110,7 @@
 
         <!-- ================= PAGE CAISSE (POS) ================= -->
         <section id="page-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Gauche: Catalogue des produits -->
             <div class="lg:col-span-2 space-y-4">
-                
-                <!-- Bandeau alerte modification commande -->
                 <div id="edit-banner" class="hidden bg-[#c85a32] text-white p-3 rounded-xl shadow flex justify-between items-center">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-pen-to-square text-xl"></i>
@@ -121,36 +121,23 @@
                     </button>
                 </div>
 
-                <!-- Filtre par Catégories et Actions -->
                 <div class="bg-white/30 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/40 space-y-3">
                     <div class="flex justify-between items-center border-b border-stone-300/40 pb-2">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold uppercase tracking-wider text-stone-700">CATALOGUE:</span>
                             <span id="product-count-badge" class="bg-amber-100/80 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">0 produit(s)</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <!-- Bouton réinitialiser masqué par défaut (hidden) -->
-                            <button id="btn-reset-data" onclick="resetToDefaults()" class="hidden text-xs text-stone-700 hover:text-amber-900 font-bold underline">
-                                <i class="fa-solid fa-arrows-rotate mr-1"></i>Réinitialiser images & données
-                            </button>
-                        </div>
                     </div>
 
                     <div class="flex flex-wrap gap-2 justify-between items-center">
-                        <div id="category-filters" class="flex flex-wrap gap-2">
-                            <!-- Généré en JS -->
-                        </div>
+                        <div id="category-filters" class="flex flex-wrap gap-2"></div>
                         <input type="text" id="search-product" oninput="filterProducts()" placeholder="🔍 Rechercher un produit..." class="px-3 py-1.5 bg-white/60 border border-stone-300/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#c85a32]">
                     </div>
                 </div>
 
-                <!-- Grille des Produits -->
-                <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[calc(100vh-230px)] overflow-y-auto pr-1">
-                    <!-- Généré dynamiquement en JS -->
-                </div>
+                <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[calc(100vh-230px)] overflow-y-auto pr-1"></div>
             </div>
 
-            <!-- Droite: Panier & Validation de Commande -->
             <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-lg border border-white/40 p-5 flex flex-col justify-between h-[calc(100vh-140px)] sticky top-20">
                 <div>
                     <h2 class="text-lg font-extrabold text-stone-900 border-b border-stone-300/40 pb-3 mb-4 flex justify-between items-center">
@@ -161,7 +148,6 @@
                         <span id="order-id-display" class="text-xs bg-stone-100/80 text-stone-800 font-bold px-2.5 py-1 rounded-md border border-stone-300/50">Nouveau</span>
                     </h2>
 
-                    <!-- Infos Client & Serveur -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-stone-800 mb-1">Nom du Client</label>
@@ -173,13 +159,11 @@
                         </div>
                     </div>
 
-                    <!-- Liste des articles dans le panier -->
                     <div id="cart-items" class="space-y-3 overflow-y-auto max-h-[280px] pr-1 divide-y divide-stone-200/50">
                         <p class="text-center text-stone-600 font-semibold text-sm py-8">Aucun produit dans la commande</p>
                     </div>
                 </div>
 
-                <!-- Pied de panier: Total et Actions -->
                 <div class="border-t border-stone-300/40 pt-4 mt-4 space-y-3">
                     <div class="flex justify-between items-center text-stone-800 text-sm font-semibold">
                         <span>Nombre d'articles:</span>
@@ -202,7 +186,7 @@
             </div>
         </section>
 
-        <!-- ================= PAGE SOUVENIRS CLIENTS ================= -->
+        <!-- ================= PAGE SOUVENIRS CLIENTS (CARROUSEL) ================= -->
         <section id="page-memories" class="hidden space-y-6">
             <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/40 flex flex-wrap justify-between items-center gap-4">
                 <div>
@@ -210,37 +194,49 @@
                         <i class="fa-solid fa-camera-retro text-[#c85a32]"></i>
                         <span>Galerie Souvenirs & Clients Réguliers</span>
                     </h2>
-                    <p class="text-sm text-stone-700 font-medium">Déroulez et partagez les photos souvenirs des moments forts avec vos fidèles clients.</p>
+                    <p class="text-sm text-stone-700 font-medium">Défilement automatique des photos (10 sec).</p>
                 </div>
-                <div>
+                <div class="flex items-center gap-2">
+                    <button onclick="resetMemoriesToDefaults()" class="bg-stone-700 hover:bg-stone-800 text-white px-3 py-2.5 rounded-xl text-xs font-bold transition shadow" title="Réinitialiser la galerie de base">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Réinitialiser Galerie
+                    </button>
                     <label class="bg-[#c85a32] hover:bg-[#a84624] text-white px-4 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-plus"></i> Ajouter un Souvenir
-                        <input type="file" id="memory-file-input" accept="image/*" class="hidden" onchange="addMemoryPhoto(event)">
+                        <i class="fa-solid fa-plus"></i> Ajouter des Souvenirs
+                        <input type="file" id="memory-file-input" accept="image/*" multiple class="hidden" onchange="addMemoryPhotos(event)">
                     </label>
                 </div>
             </div>
 
-            <!-- Grille des photos souvenirs -->
-            <div id="memories-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Généré dynamiquement en JS -->
+            <div class="relative group">
+                <button onclick="scrollMemories(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-[#c85a32] text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg backdrop-blur-sm">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div id="memories-grid" class="flex gap-6 overflow-x-auto scroll-smooth py-4 px-2 snap-x snap-mandatory scrollbar-none"></div>
+
+                <button onclick="scrollMemories(1)" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-[#c85a32] text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg backdrop-blur-sm">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
         </section>
 
         <!-- ================= PAGE INVENTAIRE & STOCK ================= -->
+
         <section id="page-inventory" class="hidden space-y-6">
             <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/40 flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <h2 class="text-xl font-extrabold text-stone-900">Gestion de l'Inventaire & Prix</h2>
                     <p class="text-sm text-stone-700 font-medium">Mettez à jour le stock, ajustez les prix de vente ou importez des données via Excel.</p>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <label class="bg-[#c85a32] hover:bg-[#a84624] text-white px-4 py-2 rounded-xl text-sm font-bold transition cursor-pointer flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-file-import"></i> Importer Excel
-                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="hidden" onchange="importInventoryExcel(event)">
-                    </label>
-                    <button onclick="exportInventoryExcel()" class="bg-[#2a1810] hover:bg-black text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-file-export"></i> Exporter Stock
+                <!-- BOUTONS AJOUTÉS DANS LA ZONE ROUGE -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="openAddProductModal()" class="bg-[#c85a32] hover:bg-[#a84624] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Ajouter Produit
                     </button>
+                    <label class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-excel"></i> Importer Excel
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="importExcelProducts(event)">
+                    </label>
                 </div>
             </div>
 
@@ -259,9 +255,7 @@
                                 <th class="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="inventory-table-body" class="divide-y divide-white/20 text-sm">
-                            <!-- Généré en JS -->
-                        </tbody>
+                        <tbody id="inventory-table-body" class="divide-y divide-white/20 text-sm"></tbody>
                     </table>
                 </div>
             </div>
@@ -269,13 +263,9 @@
 
         <!-- ================= PAGE RAPPORTS & VENTES ================= -->
         <section id="page-reports" class="hidden space-y-6">
-            
             <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/40 space-y-4">
                 <div class="flex flex-wrap gap-4 justify-between items-center">
                     <h2 class="text-xl font-extrabold text-stone-900"><i class="fa-solid fa-filter text-[#c85a32] mr-2"></i>Filtres d'historique</h2>
-                    <button onclick="exportSalesExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-file-excel"></i> Exporter en Excel
-                    </button>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 pt-2">
@@ -306,17 +296,8 @@
                         </button>
                     </div>
                 </div>
-
-                <div class="border-t border-stone-300/40 pt-3 flex items-center gap-3 bg-amber-50/40 p-3 rounded-xl border border-amber-200/50">
-                    <span class="text-xs font-bold text-amber-950 uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass"></i> Édition Rapide :</span>
-                    <input type="text" id="direct-cmd-id" placeholder="Ex: CMD-1001" class="bg-white/80 border border-amber-300/60 rounded-lg px-3 py-1 text-sm uppercase">
-                    <button onclick="loadOrderDirectly()" class="bg-[#c85a32] hover:bg-[#a84624] text-white px-3 py-1 rounded-lg text-sm font-bold transition">
-                        Charger
-                    </button>
-                </div>
             </div>
 
-            <!-- Cartes KPI / Statistiques -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl border border-white/40 shadow-lg flex items-center justify-between">
                     <div>
@@ -341,7 +322,6 @@
                 </div>
             </div>
 
-            <!-- Tableau d'Historique des Commandes -->
             <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-lg border border-white/40 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -356,15 +336,42 @@
                                 <th class="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="sales-table-body" class="divide-y divide-white/20 text-sm">
-                            <!-- Généré en JS -->
-                        </tbody>
+                        <tbody id="sales-table-body" class="divide-y divide-white/20 text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
     </main>
+
+    <!-- MODAL PLEIN ÉCRAN POUR SOUVENIRS -->
+    <div id="memory-modal" class="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md hidden flex flex-col justify-between p-4 md:p-8">
+        <div class="flex justify-between items-center text-white z-10 max-w-7xl w-full mx-auto">
+            <div>
+                <h3 id="modal-memory-title" class="text-lg md:text-xl font-bold"></h3>
+                <p id="modal-memory-date" class="text-xs text-stone-400"></p>
+            </div>
+            <button onclick="closeMemoryModal()" class="bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="relative flex-1 flex items-center justify-center p-2 my-auto max-h-[85vh] w-full max-w-6xl mx-auto">
+            <button onclick="navigateModalMemory(-1)" class="absolute left-2 z-20 bg-white/20 hover:bg-[#c85a32] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-lg backdrop-blur-sm">
+                <i class="fa-solid fa-chevron-left text-xl"></i>
+            </button>
+
+            <img id="modal-memory-img" src="" alt="Souvenir plein écran" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-all duration-300">
+
+            <button onclick="navigateModalMemory(1)" class="absolute right-2 z-20 bg-white/20 hover:bg-[#c85a32] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-lg backdrop-blur-sm">
+                <i class="fa-solid fa-chevron-right text-xl"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col items-center justify-center text-stone-400 text-xs font-semibold z-10 gap-1">
+            <span id="modal-memory-counter"></span>
+        </div>
+    </div>
 
     <!-- App JavaScript Logic -->
     <script>
@@ -378,14 +385,7 @@
 
         const FALLBACK_IMAGES = {
             "JUS-ORG-01": "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400",
-            "JUS-AVC-02": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400",
-            "CAF-ESP-03": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400",
-            "CAF-ALL-04": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400",
-            "CAF-CAP-05": "https://images.unsplash.com/photo-1534778101976-62847782c213?w=400",
-            "CAF-LAT-06": "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=400",
-            "GAT-CHO-07": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400",
-            "GAT-CIT-08": "https://images.unsplash.com/photo-1519869325930-281384150729?w=400",
-            "GAT-TAR-09": "https://images.unsplash.com/photo-1519869325930-281384150729?w=400"
+            "JUS-AVC-02": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400"
         };
 
         const DEFAULT_PRODUCTS = [
@@ -400,18 +400,27 @@
             { id: "GAT-TAR-09", name: "Tartelette Fine aux Fruits de Saison", category: "Pâtisseries & Gâteaux", costPrice: 10, salePrice: 28, stock: 15, image: "Tartelette Fine aux Fruits de Saison.jpg" }
         ];
 
-        const DEFAULT_MEMORIES = [
-            { id: 1, title: "Pause Café entre Amis", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600", date: "2024-02-15" },
-            { id: 2, title: "Client Récurant M. Amine", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600", date: "2024-02-20" }
-        ];
+        const NOMBRE_TOTAL_PHOTOS = 30;
+
+        const SOUVENIR_PHOTOS = Array.from({ length: NOMBRE_TOTAL_PHOTOS }, (_, index) => {
+            const num = index + 1;
+            return {
+                id: num,
+                title: `Souvenir ${num}`,
+                image: `Souvenir_${num}.jpg`,
+                date: new Date().toISOString().split('T')[0]
+            };
+        });
 
         let products = JSON.parse(localStorage.getItem('tifaouin_products')) || DEFAULT_PRODUCTS;
         let sales = JSON.parse(localStorage.getItem('tifaouin_sales')) || [];
-        let memories = JSON.parse(localStorage.getItem('tifaouin_memories')) || DEFAULT_MEMORIES;
+        let memories = JSON.parse(localStorage.getItem('tifaouin_memories')) || SOUVENIR_PHOTOS;
 
         let cart = [];
         let activeCategory = "Toutes";
         let editingOrderId = null;
+        let currentMemoryIndex = 0;
+        let carouselAutoScrollInterval = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             renderCategories();
@@ -427,21 +436,17 @@
             event.preventDefault();
             const username = document.getElementById('login-user').value;
             const passwordInput = document.getElementById('login-password').value;
-            const errorMsg = document.getElementById('login-error');
 
             if (USERS[username] && USERS[username].password === passwordInput) {
                 currentUser = { name: username, role: USERS[username].role };
                 document.getElementById('login-modal').classList.add('hidden');
                 document.getElementById('login-password').value = '';
-                errorMsg.classList.add('hidden');
-
                 document.getElementById('current-user-display').innerText = currentUser.name;
                 document.getElementById('current-role-display').innerText = currentUser.role;
                 document.getElementById('cart-server').value = currentUser.name;
-
                 applyRolePermissions();
             } else {
-                errorMsg.classList.remove('hidden');
+                document.getElementById('login-error').classList.remove('hidden');
             }
         }
 
@@ -454,50 +459,18 @@
         function applyRolePermissions() {
             const tabInventory = document.getElementById('tab-inventory');
             const tabReports = document.getElementById('tab-reports');
-            const btnResetData = document.getElementById('btn-reset-data');
-
             if (currentUser.role === 'serveur') {
                 tabInventory.classList.add('hidden');
                 tabReports.classList.add('hidden');
-                if (btnResetData) btnResetData.classList.add('hidden');
                 switchTab('pos');
             } else {
                 tabInventory.classList.remove('hidden');
                 tabReports.classList.remove('hidden');
-                if (btnResetData) btnResetData.classList.remove('hidden');
             }
-        }
-
-        function handleImageError(imgElement, productId) {
-            imgElement.onerror = null;
-            imgElement.src = FALLBACK_IMAGES[productId] || 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400';
-        }
-
-        function resetToDefaults() {
-            if (!currentUser || currentUser.role !== 'patron') {
-                alert("Action non autorisée. Seul le patron (Rachid Bouzkeri) peut réinitialiser les données.");
-                return;
-            }
-
-            if (confirm("Voulez-vous vraiment réinitialiser toutes les données et images par défaut ?")) {
-                products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-                memories = JSON.parse(JSON.stringify(DEFAULT_MEMORIES));
-                localStorage.setItem('tifaouin_products', JSON.stringify(products));
-                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
-                renderCategories();
-                renderProducts();
-                renderInventoryTable();
-                renderMemories();
-                alert("Les données et chemins d'images ont été réinitialisés !");
-            }
+            renderSalesTable();
         }
 
         function switchTab(tabName) {
-            if (currentUser && currentUser.role === 'serveur' && (tabName === 'inventory' || tabName === 'reports')) {
-                alert("Accès réservé au patron.");
-                return;
-            }
-
             document.getElementById('page-pos').classList.add('hidden');
             document.getElementById('page-memories').classList.add('hidden');
             document.getElementById('page-reports').classList.add('hidden');
@@ -511,6 +484,7 @@
             if (tabName === 'pos') {
                 document.getElementById('page-pos').classList.remove('hidden');
                 document.getElementById('tab-pos').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
+                stopMainCarouselAutoScroll();
             } else if (tabName === 'memories') {
                 document.getElementById('page-memories').classList.remove('hidden');
                 document.getElementById('tab-memories').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
@@ -518,60 +492,135 @@
             } else if (tabName === 'reports') {
                 document.getElementById('page-reports').classList.remove('hidden');
                 document.getElementById('tab-reports').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
+                stopMainCarouselAutoScroll();
                 renderSalesTable();
             } else if (tabName === 'inventory') {
                 document.getElementById('page-inventory').classList.remove('hidden');
                 document.getElementById('tab-inventory').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
+                stopMainCarouselAutoScroll();
                 renderInventoryTable();
             }
         }
 
-        /* --- SOUVENIRS FUNCTIONS --- */
+    
+    /* --- SOUVENIRS FUNCTIONS --- */
         function renderMemories() {
             const container = document.getElementById('memories-grid');
-            if (memories.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 text-stone-700 font-bold bg-white/30 backdrop-blur-md rounded-2xl border border-white/40">Aucune photo souvenir ajoutée.</div>`;
+            if (!memories || memories.length === 0) {
+                container.innerHTML = `<div class="w-full text-center py-12 text-stone-700 font-bold bg-white/30 backdrop-blur-md rounded-2xl border border-white/40">Aucune photo souvenir disponible.</div>`;
+                stopMainCarouselAutoScroll();
                 return;
             }
 
-            container.innerHTML = memories.map(m => `
-                <div class="bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl overflow-hidden shadow-md group relative flex flex-col justify-between">
-                    <div class="h-56 w-full overflow-hidden bg-stone-100">
-                        <img src="${m.image}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            container.innerHTML = memories.map((m, index) => `
+                <div class="min-w-[280px] sm:min-w-[320px] max-w-[320px] snap-center bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl overflow-hidden shadow-md group relative flex flex-col justify-between shrink-0">
+                    <div onclick="openMemoryModal(${index})" class="h-64 w-full overflow-hidden bg-stone-100 cursor-pointer relative group">
+                        <img src="${m.image}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600';">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white font-bold text-sm gap-2">
+                            <i class="fa-solid fa-expand"></i> Plein écran
+                        </div>
                     </div>
                     <div class="p-3 bg-white/60 flex justify-between items-center border-t border-white/30">
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm">${m.title}</h4>
+                            <h4 class="font-bold text-stone-900 text-sm truncate max-w-[200px]">${m.title}</h4>
                             <span class="text-[10px] text-stone-600 font-semibold">${m.date}</span>
                         </div>
-                        <button onclick="deleteMemory(${m.id})" class="text-red-500 hover:text-red-700 p-1 rounded-lg transition" title="Supprimer la photo">
+                        <button onclick="deleteMemory(${m.id})" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition" title="Supprimer">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
             `).join('');
+
+            if (memories.length > 1) {
+                startMainCarouselAutoScroll();
+            } else {
+                stopMainCarouselAutoScroll();
+            }
         }
 
-        function addMemoryPhoto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function scrollMemories(direction) {
+            const container = document.getElementById('memories-grid');
+            if (direction === 1 && (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10)) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: direction * 340, behavior: 'smooth' });
+            }
+        }
 
-            const title = prompt("Titre ou Nom du Client / Événement :", "Client Régulier");
-            if (!title) return;
+        function startMainCarouselAutoScroll() {
+            stopMainCarouselAutoScroll();
+            carouselAutoScrollInterval = setInterval(() => { scrollMemories(1); }, 10000);
+        }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const newMemory = {
-                    id: Date.now(),
-                    title: title,
-                    image: e.target.result,
-                    date: new Date().toISOString().split('T')[0]
-                };
-                memories.unshift(newMemory);
-                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
-                renderMemories();
-            };
-            reader.readAsDataURL(file);
+        function stopMainCarouselAutoScroll() {
+            if (carouselAutoScrollInterval) {
+                clearInterval(carouselAutoScrollInterval);
+                carouselAutoScrollInterval = null;
+            }
+        }
+
+        function openMemoryModal(index) {
+            if (memories.length === 0) return;
+            currentMemoryIndex = index;
+            updateModalContent();
+            document.getElementById('memory-modal').classList.remove('hidden');
+        }
+
+        function updateModalContent() {
+            const memory = memories[currentMemoryIndex];
+            if (!memory) return;
+
+            document.getElementById('modal-memory-img').src = memory.image;
+            document.getElementById('modal-memory-title').innerText = memory.title;
+            document.getElementById('modal-memory-date').innerText = memory.date;
+            document.getElementById('modal-memory-counter').innerText = `${currentMemoryIndex + 1} / ${memories.length}`;
+        }
+
+        function navigateModalMemory(direction) {
+            if (memories.length === 0) return;
+            currentMemoryIndex = (currentMemoryIndex + direction + memories.length) % memories.length;
+            updateModalContent();
+        }
+
+        function closeMemoryModal() {
+            document.getElementById('memory-modal').classList.add('hidden');
+        }
+
+        function addMemoryPhotos(event) {
+            const files = Array.from(event.target.files);
+            if (!files || files.length === 0) return;
+
+            let addedCount = 0;
+            let promises = [];
+
+            files.forEach(file => {
+                const promise = new Promise((resolve) => {
+                    const defaultName = file.name.split('.')[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        memories.unshift({
+                            id: Date.now() + Math.random(),
+                            title: defaultName,
+                            image: e.target.result,
+                            date: new Date().toISOString().split('T')[0]
+                        });
+                        addedCount++;
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                promises.push(promise);
+            });
+
+            Promise.all(promises).then(() => {
+                if (addedCount > 0) {
+                    localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
+                    renderMemories();
+                }
+                event.target.value = '';
+            });
         }
 
         function deleteMemory(id) {
@@ -582,6 +631,15 @@
             }
         }
 
+        function resetMemoriesToDefaults() {
+            if (confirm("Voulez-vous réinitialiser la galerie avec la liste complète des photos Souvenir_# ?")) {
+                memories = [...SOUVENIR_PHOTOS];
+                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
+                renderMemories();
+            }
+        }
+
+        /* --- CATALOGUE & CAISSE --- */
         function renderCategories() {
             const rawCategories = products.map(p => p.category).filter(Boolean);
             const categories = ["Toutes", ...new Set(rawCategories)];
@@ -620,7 +678,7 @@
                 <div onclick="addToCart('${p.id}')" class="bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-3 shadow-md hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
                     <div>
                         <div class="h-28 w-full rounded-xl overflow-hidden mb-2 bg-stone-100/50 relative">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="handleImageError(this, '${p.id}')">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='${FALLBACK_IMAGES[p.id] || 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400'}';">
                             <span class="absolute top-2 right-2 bg-stone-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">Stock: ${p.stock}</span>
                         </div>
                         <span class="text-[10px] uppercase font-extrabold text-[#c85a32] tracking-wider">${p.category || 'Général'}</span>
@@ -640,19 +698,11 @@
 
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
-            if (!product) return;
-
-            if (product.stock <= 0) {
-                alert("Stock épuisé pour ce produit !");
-                return;
-            }
+            if (!product || product.stock <= 0) return;
 
             const existing = cart.find(item => item.id === productId);
             if (existing) {
-                if (existing.qty + 1 > product.stock) {
-                    alert("Stock insuffisant !");
-                    return;
-                }
+                if (existing.qty + 1 > product.stock) return;
                 existing.qty++;
             } else {
                 cart.push({ id: product.id, name: product.name, price: product.salePrice, qty: 1 });
@@ -662,18 +712,9 @@
 
         function updateCartQty(productId, delta) {
             const item = cart.find(i => i.id === productId);
-            const product = products.find(p => p.id === productId);
             if (!item) return;
-
-            if (delta > 0 && item.qty + delta > product.stock) {
-                alert("Stock limité à " + product.stock);
-                return;
-            }
-
             item.qty += delta;
-            if (item.qty <= 0) {
-                cart = cart.filter(i => i.id !== productId);
-            }
+            if (item.qty <= 0) cart = cart.filter(i => i.id !== productId);
             renderCart();
         }
 
@@ -688,8 +729,11 @@
             document.getElementById('edit-banner').classList.add('hidden');
             document.getElementById('cart-client').value = '';
             document.getElementById('order-id-display').innerText = 'Nouveau';
-            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-check"></i> Valider la commande`;
             renderCart();
+        }
+
+        function cancelEdit() {
+            clearCart();
         }
 
         function renderCart() {
@@ -715,9 +759,9 @@
                             <span class="text-xs text-stone-700 font-semibold">${item.price.toFixed(2)} MAD</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 rounded bg-white/60 text-stone-900 hover:bg-white font-bold flex items-center justify-center text-xs border border-stone-300/40">-</button>
+                            <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 rounded bg-white/60 text-stone-900 font-bold border border-stone-300/40">-</button>
                             <span class="font-bold text-sm text-stone-900 w-4 text-center">${item.qty}</span>
-                            <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 rounded bg-white/60 text-stone-900 hover:bg-white font-bold flex items-center justify-center text-xs border border-stone-300/40">+</button>
+                            <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 rounded bg-white/60 text-stone-900 font-bold border border-stone-300/40">+</button>
                         </div>
                         <div class="w-16 text-right font-black text-stone-900 text-xs">${subtotal.toFixed(2)}</div>
                         <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 ml-2 text-xs"><i class="fa-solid fa-xmark"></i></button>
@@ -730,10 +774,7 @@
         }
 
         function processOrder() {
-            if (cart.length === 0) {
-                alert("La commande est vide !");
-                return;
-            }
+            if (cart.length === 0) return;
 
             const server = currentUser ? currentUser.name : "Anonyme";
             const client = document.getElementById('cart-client').value.trim() || "Client Passage";
@@ -741,24 +782,35 @@
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
             if (editingOrderId) {
-                const index = sales.findIndex(s => s.id === editingOrderId);
-                if (index !== -1) {
-                    const oldOrder = sales[index];
-                    oldOrder.items.forEach(oldItem => {
-                        const prod = products.find(p => p.id === oldItem.id);
-                        if (prod) prod.stock += oldItem.qty;
+                // Restituer d'abord l'ancien stock avant de modifier
+                const oldOrder = sales.find(s => s.id === editingOrderId);
+                if (oldOrder) {
+                    oldOrder.items.forEach(item => {
+                        const prod = products.find(p => p.id === item.id);
+                        if (prod) prod.stock += item.qty;
                     });
-
-                    cart.forEach(newItem => {
-                        const prod = products.find(p => p.id === newItem.id);
-                        if (prod) prod.stock -= newItem.qty;
-                    });
-
-                    sales[index] = { ...sales[index], server, client, items: [...cart], total: totalAmount, updatedAt: now.toISOString() };
-                    generateReceiptPDF(sales[index]);
-                    alert(`Commande ${editingOrderId} mise à jour avec succès !`);
                 }
+
+                // Déduire le nouveau stock
+                cart.forEach(item => {
+                    const prod = products.find(p => p.id === item.id);
+                    if (prod) prod.stock -= item.qty;
+                });
+
+                // Mettre à jour la commande existante
+                const orderIndex = sales.findIndex(s => s.id === editingOrderId);
+                if (orderIndex !== -1) {
+                    sales[orderIndex] = {
+                        ...sales[orderIndex],
+                        client,
+                        items: [...cart],
+                        total: totalAmount,
+                        date: now.toISOString()
+                    };
+                }
+                alert(`Commande ${editingOrderId} mise à jour avec succès !`);
             } else {
+                // Nouvelle commande
                 const orderId = "CMD-" + Math.floor(1000 + Math.random() * 9000);
                 cart.forEach(item => {
                     const prod = products.find(p => p.id === item.id);
@@ -767,8 +819,7 @@
 
                 const newOrder = { id: orderId, date: now.toISOString(), server, client, items: [...cart], total: totalAmount };
                 sales.unshift(newOrder);
-                generateReceiptPDF(newOrder);
-                alert(`Commande ${orderId} enregistrée avec succès !`);
+                alert(`Commande ${orderId} validée avec succès !`);
             }
 
             localStorage.setItem('tifaouin_sales', JSON.stringify(sales));
@@ -777,138 +828,166 @@
             clearCart();
             renderProducts();
             renderInventoryTable();
+            renderSalesTable();
         }
 
-        function loadOrderForEdit(orderId) {
-            const order = sales.find(s => s.id === orderId);
-            if (!order) {
-                alert("Commande non trouvée !");
-                return;
+        /* --- INVENTAIRE & RAPPORTS --- */
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = products.map((p, index) => `
+                <tr class="hover:bg-white/40 transition">
+                    <td class="p-3">
+                        <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg border border-stone-200" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400';">
+                    </td>
+                    <td class="p-3 font-mono text-xs font-bold text-stone-800">${p.id}</td>
+                    <td class="p-3 font-bold text-stone-900">${p.name}</td>
+                    <td class="p-3 text-xs text-[#c85a32] font-extrabold">${p.category}</td>
+                    <td class="p-3 font-semibold text-stone-800">${p.costPrice.toFixed(2)} MAD</td>
+                    <td class="p-3"><input type="number" value="${p.salePrice}" onchange="updateProductPrice(${index}, this.value)" class="w-20 bg-white/70 border rounded px-2 py-1 text-xs font-bold"></td>
+                    <td class="p-3"><input type="number" value="${p.stock}" onchange="updateProductStock(${index}, this.value)" class="w-20 bg-white/70 border rounded px-2 py-1 text-xs font-bold"></td>
+                    <td class="p-3 text-center"><button onclick="deleteProduct(${index})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function updateProductPrice(index, value) {
+            products[index].salePrice = parseFloat(value) || 0;
+            localStorage.setItem('tifaouin_products', JSON.stringify(products));
+        }
+
+        function updateProductStock(index, value) {
+            products[index].stock = parseInt(value) || 0;
+            localStorage.setItem('tifaouin_products', JSON.stringify(products));
+        }
+
+        function deleteProduct(index) {
+            if (confirm("Supprimer ce produit ?")) {
+                products.splice(index, 1);
+                localStorage.setItem('tifaouin_products', JSON.stringify(products));
+                renderInventoryTable();
+                renderProducts();
             }
+        }
+
+        function renderSalesTable(filteredSales = sales) {
+            const tbody = document.getElementById('sales-table-body');
+            const isPatron = currentUser && currentUser.role === 'patron';
+
+            tbody.innerHTML = filteredSales.map(s => `
+                <tr class="hover:bg-white/40 transition">
+                    <td class="p-4 font-black text-[#c85a32]">${s.id}</td>
+                    <td class="p-4 text-xs font-semibold">${new Date(s.date).toLocaleString('fr-FR')}</td>
+                    <td class="p-4 font-bold text-stone-900">${s.server}</td>
+                    <td class="p-4 font-medium text-stone-800">${s.client}</td>
+                    <td class="p-4 text-xs font-medium text-stone-800 max-w-xs truncate">${s.items.map(i => `${i.qty}x${i.name}`).join(', ')}</td>
+                    <td class="p-4 font-black text-stone-900 text-right">${s.total.toFixed(2)} MAD</td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="downloadInvoice('${s.id}')" class="bg-amber-100/80 hover:bg-amber-200 text-[#c85a32] px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm" title="Télécharger / Imprimer Facture">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <span class="hidden sm:inline">Facture</span>
+                            </button>
+                            ${isPatron ? `
+                                <button onclick="editOrder('${s.id}')" class="bg-blue-100/80 hover:bg-blue-200 text-blue-800 px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm" title="Modifier la commande">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <span class="hidden sm:inline">Modifier</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            calculateKPIs(filteredSales);
+        }
+
+        /* --- FONCTION DE TÉLÉCHARGEMENT PDF (FACTURE) --- */
+        function downloadInvoice(orderId) {
+            const order = sales.find(s => s.id === orderId);
+            if (!order) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                unit: 'mm',
+                format: [80, 160] // Format Reçu Caisse
+            });
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("TIFAOUIN", 40, 10, { align: "center" });
+
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text("Café & Gourmet Atlas", 40, 14, { align: "center" });
+            doc.text("--------------------------------------------------", 40, 18, { align: "center" });
+
+            doc.text(`N° Commande: ${order.id}`, 5, 23);
+            doc.text(`Date: ${new Date(order.date).toLocaleString('fr-FR')}`, 5, 27);
+            doc.text(`Serveur: ${order.server}`, 5, 31);
+            doc.text(`Client: ${order.client}`, 5, 35);
+            doc.text("--------------------------------------------------", 40, 39, { align: "center" });
+
+            let y = 44;
+            doc.setFont("helvetica", "bold");
+            doc.text("Article", 5, y);
+            doc.text("Qté", 45, y);
+            doc.text("Total", 75, y, { align: "right" });
+            y += 4;
+
+            doc.setFont("helvetica", "normal");
+            order.items.forEach(item => {
+                const itemTotal = (item.price * item.qty).toFixed(2);
+                let name = item.name;
+                if (name.length > 20) name = name.substring(0, 18) + "..";
+                
+                doc.text(name, 5, y);
+                doc.text(`${item.qty}`, 47, y);
+                doc.text(`${itemTotal}`, 75, y, { align: "right" });
+                y += 5;
+            });
+
+            doc.text("--------------------------------------------------", 40, y, { align: "center" });
+            y += 5;
+
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.text(`TOTAL: ${order.total.toFixed(2)} MAD`, 75, y, { align: "right" });
+
+            y += 10;
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "italic");
+            doc.text("Merci de votre visite !", 40, y, { align: "center" });
+
+            doc.save(`Facture_${order.id}.pdf`);
+        }
+
+        /* --- FONCTION DE MODIFICATION DE COMMANDE --- */
+        function editOrder(orderId) {
+            const order = sales.find(s => s.id === orderId);
+            if (!order) return;
 
             editingOrderId = order.id;
             cart = order.items.map(i => ({ ...i }));
 
-            document.getElementById('cart-server').value = order.server;
-            document.getElementById('cart-client').value = order.client;
             document.getElementById('edit-cmd-id').innerText = order.id;
-            document.getElementById('order-id-display').innerText = order.id;
             document.getElementById('edit-banner').classList.remove('hidden');
-            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-rotate"></i> Mettre à jour`;
+            document.getElementById('cart-client').value = order.client;
+            document.getElementById('order-id-display').innerText = order.id;
 
             switchTab('pos');
             renderCart();
         }
 
-        function loadOrderDirectly() {
-            const cmdId = document.getElementById('direct-cmd-id').value.trim().toUpperCase();
-            if(!cmdId) return;
-            loadOrderForEdit(cmdId);
-        }
-
-        function cancelEdit() {
-            clearCart();
-        }
-
-        function generateReceiptPDF(order) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ unit: 'mm', format: [80, 150] });
-            const dateStr = new Date(order.date).toLocaleString('fr-FR');
-
-            doc.setFont('Helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text("TIFAOUIN", 40, 10, { align: 'center' });
-
-            doc.setFont('Helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.text("Café & Gourmet Atlas", 40, 14, { align: 'center' });
-            doc.text("--------------------------------------------------", 40, 18, { align: 'center' });
-
-            doc.text(`N° Commande : ${order.id}`, 5, 23);
-            doc.text(`Date : ${dateStr}`, 5, 27);
-            doc.text(`Serveur : ${order.server}`, 5, 31);
-            doc.text(`Client : ${order.client}`, 5, 35);
-
-            doc.text("--------------------------------------------------", 40, 39, { align: 'center' });
-
-            let y = 44;
-            doc.setFont('Helvetica', 'bold');
-            doc.text("Article", 5, y);
-            doc.text("Qté", 45, y);
-            doc.text("Total", 75, y, { align: 'right' });
-            
-            doc.setFont('Helvetica', 'normal');
-            y += 4;
-
-            order.items.forEach(item => {
-                doc.text(item.name.substring(0, 20), 5, y);
-                doc.text(`${item.qty}`, 47, y);
-                doc.text(`${(item.qty * item.price).toFixed(2)}`, 75, y, { align: 'right' });
-                y += 5;
-            });
-
-            doc.text("--------------------------------------------------", 40, y, { align: 'center' });
-            y += 5;
-
-            doc.setFontSize(11);
-            doc.setFont('Helvetica', 'bold');
-            doc.text(`TOTAL : ${order.total.toFixed(2)} MAD`, 75, y, { align: 'right' });
-
-            y += 10;
-            doc.setFontSize(8);
-            doc.setFont('Helvetica', 'italic');
-            doc.text("Merci de votre visite !", 40, y, { align: 'center' });
-
-            doc.save(`Ticket_${order.id}.pdf`);
-        }
-
-        function renderSalesTable(filteredSales = sales) {
-            const tbody = document.getElementById('sales-table-body');
-            
-            if (filteredSales.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-stone-700 font-bold">Aucune commande enregistrée</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = filteredSales.map(s => {
-                const itemsSummary = s.items.map(i => `${i.qty}x ${i.name}`).join(', ');
-                const dateFormatted = new Date(s.date).toLocaleString('fr-FR');
-                return `
-                    <tr class="hover:bg-white/40 transition">
-                        <td class="p-4 font-black text-[#c85a32]">${s.id}</td>
-                        <td class="p-4 text-xs font-semibold text-stone-800">${dateFormatted}</td>
-                        <td class="p-4 font-bold text-stone-900">${s.server}</td>
-                        <td class="p-4 font-medium text-stone-800">${s.client}</td>
-                        <td class="p-4 text-xs font-medium text-stone-800 max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
-                        <td class="p-4 font-black text-stone-900 text-right">${s.total.toFixed(2)} MAD</td>
-                        <td class="p-4 text-center space-x-2">
-                            <button onclick="loadOrderForEdit('${s.id}')" class="bg-amber-100/90 hover:bg-amber-200 text-amber-950 px-2.5 py-1 rounded-lg text-xs font-bold transition">
-                                <i class="fa-solid fa-pen"></i> Modifier
-                            </button>
-                            <button onclick="reprintReceipt('${s.id}')" class="bg-white/70 hover:bg-white text-stone-900 px-2.5 py-1 rounded-lg text-xs font-bold transition border border-stone-300/40">
-                                <i class="fa-solid fa-file-pdf"></i> PDF
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function reprintReceipt(orderId) {
-            const order = sales.find(s => s.id === orderId);
-            if (order) generateReceiptPDF(order);
-        }
-
+        /* --- FILTRES DE RECHERCHE DANS LES RAPPORTS --- */
         function applyFilters() {
-            const startDate = document.getElementById('filter-date-start').value;
-            const endDate = document.getElementById('filter-date-end').value;
+            const start = document.getElementById('filter-date-start').value;
+            const end = document.getElementById('filter-date-end').value;
             const server = document.getElementById('filter-server').value;
             const search = document.getElementById('filter-search').value.toLowerCase();
 
             const filtered = sales.filter(s => {
-                const orderDate = s.date.split('T')[0];
-                const matchStart = !startDate || orderDate >= startDate;
-                const matchEnd = !endDate || orderDate <= endDate;
+                const sDate = s.date.split('T')[0];
+                const matchStart = !start || sDate >= start;
+                const matchEnd = !end || sDate <= end;
                 const matchServer = !server || s.server === server;
                 const matchSearch = !search || s.client.toLowerCase().includes(search) || s.id.toLowerCase().includes(search);
 
@@ -916,7 +995,6 @@
             });
 
             renderSalesTable(filtered);
-            calculateKPIs(filtered);
         }
 
         function resetFilters() {
@@ -925,143 +1003,143 @@
             document.getElementById('filter-server').value = '';
             document.getElementById('filter-search').value = '';
             renderSalesTable(sales);
-            calculateKPIs(sales);
         }
 
         function calculateKPIs(data) {
             const totalCA = data.reduce((sum, s) => sum + s.total, 0);
-            const count = data.length;
-            const avg = count > 0 ? totalCA / count : 0;
-
             document.getElementById('kpi-ca').innerText = totalCA.toFixed(2) + " MAD";
-            document.getElementById('kpi-orders').innerText = count;
-            document.getElementById('kpi-avg').innerText = avg.toFixed(2) + " MAD";
+            document.getElementById('kpi-orders').innerText = data.length;
+            document.getElementById('kpi-avg').innerText = (data.length > 0 ? totalCA / data.length : 0).toFixed(2) + " MAD";
         }
 
-        function exportSalesExcel() {
-            if (sales.length === 0) {
-                alert("Aucune donnée de vente à exporter.");
+/* --- FONCTIONS D'AJOUT MANUEL ET EXCEL DE PRODUITS --- */
+        function openAddProductModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        function handleManualAddProduct(event) {
+            event.preventDefault();
+            const id = document.getElementById('new-prod-id').value.trim();
+            const name = document.getElementById('new-prod-name').value.trim();
+            const category = document.getElementById('new-prod-cat').value.trim();
+            const costPrice = parseFloat(document.getElementById('new-prod-cost').value) || 0;
+            const salePrice = parseFloat(document.getElementById('new-prod-sale').value) || 0;
+            const stock = parseInt(document.getElementById('new-prod-stock').value) || 0;
+
+            if (products.some(p => p.id === id)) {
+                alert("Un produit avec cet identifiant (Code ID) existe déjà !");
                 return;
             }
 
-            const exportData = sales.map(s => ({
-                "N° Commande": s.id,
-                "Date": new Date(s.date).toLocaleDateString('fr-FR'),
-                "Heure": new Date(s.date).toLocaleTimeString('fr-FR'),
-                "Serveur": s.server,
-                "Client": s.client,
-                "Articles": s.items.map(i => `${i.qty}x ${i.name}`).join(' | '),
-                "Montant Total (MAD)": s.total
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Ventes");
-
-            XLSX.writeFile(workbook, `Ventes_Tifaouin_${new Date().toISOString().split('T')[0]}.xlsx`);
-        }
-
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventory-table-body');
-            tbody.innerHTML = products.map((p, index) => `
-                <tr class="hover:bg-white/40 transition">
-                    <td class="p-3">
-                        <img src="${p.image}" alt="${p.name}" class="w-10 h-10 object-cover rounded-lg border border-stone-200" onerror="handleImageError(this, '${p.id}')">
-                    </td>
-                    <td class="p-3 font-mono text-xs font-bold text-stone-800">${p.id}</td>
-                    <td class="p-3 font-bold text-stone-900">${p.name}</td>
-                    <td class="p-3 text-xs text-[#c85a32] font-extrabold">${p.category}</td>
-                    <td class="p-3 font-semibold text-stone-800">${p.costPrice.toFixed(2)} MAD</td>
-                    <td class="p-3">
-                        <input type="number" value="${p.salePrice}" onchange="updateProductPrice(${index}, this.value)" class="w-20 bg-white/70 border border-stone-300 rounded px-2 py-1 text-xs font-bold text-stone-900 focus:ring-2 focus:ring-[#c85a32]">
-                    </td>
-                    <td class="p-3">
-                        <input type="number" value="${p.stock}" onchange="updateProductStock(${index}, this.value)" class="w-20 bg-white/70 border border-stone-300 rounded px-2 py-1 text-xs font-bold text-stone-900 focus:ring-2 focus:ring-[#c85a32]">
-                    </td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteProduct(${index})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function updateProductPrice(index, value) {
-            products[index].salePrice = parseFloat(value) || 0;
-            saveProducts();
-        }
-
-        function updateProductStock(index, value) {
-            products[index].stock = parseInt(value) || 0;
-            saveProducts();
-        }
-
-        function deleteProduct(index) {
-            if (confirm("Voulez-vous supprimer ce produit ?")) {
-                products.splice(index, 1);
-                saveProducts();
-                renderInventoryTable();
-                renderCategories();
-                renderProducts();
-            }
-        }
-
-        function saveProducts() {
+            const newProduct = { id, name, category, costPrice, salePrice, stock, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400" };
+            products.unshift(newProduct);
+            
             localStorage.setItem('tifaouin_products', JSON.stringify(products));
+            closeAddProductModal();
+            event.target.reset();
+
+            renderCategories();
+            renderProducts();
+            renderInventoryTable();
+            alert("Produit ajouté avec succès !");
         }
 
-        function importInventoryExcel(event) {
+        function importExcelProducts(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rows = XLSX.utils.sheet_to_json(worksheet);
 
-                if (jsonData.length === 0) {
-                    alert("Le fichier Excel est vide.");
-                    return;
+                    let importedCount = 0;
+
+                    rows.forEach(row => {
+                        // Correspondance des en-têtes Excel (ex: ID, Produit, Categorie, PrixAchat, PrixVente, Stock)
+                        const id = String(row.ID || row.Code || row.id || `PROD-${Date.now()}-${Math.floor(Math.random()*100)}`);
+                        const name = row.Produit || row.Nom || row.name || "Produit sans nom";
+                        const category = row.Categorie || row.Category || row.category || "Général";
+                        const costPrice = parseFloat(row.PrixAchat || row.costPrice || 0);
+                        const salePrice = parseFloat(row.PrixVente || row.salePrice || 0);
+                        const stock = parseInt(row.Stock || row.stock || 0);
+
+                        const existingIndex = products.findIndex(p => p.id === id);
+                        if (existingIndex !== -1) {
+                            products[existingIndex] = { ...products[existingIndex], name, category, costPrice, salePrice, stock };
+                        } else {
+                            products.unshift({ id, name, category, costPrice, salePrice, stock, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400" });
+                        }
+                        importedCount++;
+                    });
+
+                    localStorage.setItem('tifaouin_products', JSON.stringify(products));
+                    renderCategories();
+                    renderProducts();
+                    renderInventoryTable();
+                    alert(`${importedCount} produit(s) importé(s) / mis à jour avec succès depuis Excel !`);
+                } catch (err) {
+                    alert("Erreur lors de la lecture du fichier Excel. Vérifiez la structure de votre fichier.");
+                    console.error(err);
                 }
-
-                products = jsonData.map((row, idx) => ({
-                    id: row.ID_Produit || `PROD-${idx + 1}`,
-                    name: row.Nom_Produit || "Produit",
-                    category: row.Categorie || "Général",
-                    costPrice: parseFloat(row.Prix_Achat_MAD) || 0,
-                    salePrice: parseFloat(row.Prix_Vente_MAD) || 0,
-                    stock: parseInt(row.Stock_Initial) || 0,
-                    image: row.Lien_Image || `${row.Nom_Produit}.jpg`
-                }));
-
-                saveProducts();
-                renderCategories();
-                renderProducts();
-                renderInventoryTable();
-                alert("Inventaire et prix mis à jour avec succès !");
             };
             reader.readAsArrayBuffer(file);
-        }
-
-        function exportInventoryExcel() {
-            const exportData = products.map(p => ({
-                "ID_Produit": p.id,
-                "Nom_Produit": p.name,
-                "Categorie": p.category,
-                "Prix_Achat_MAD": p.costPrice,
-                "Prix_Vente_MAD": p.salePrice,
-                "Stock_Initial": p.stock,
-                "Lien_Image": p.image
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Inventaire");
-
-            XLSX.writeFile(workbook, `Stock_Tifaouin_${new Date().toISOString().split('T')[0]}.xlsx`);
+            event.target.value = '';
         }
     </script>
+
+<!-- MODAL AJOUT MANUEL PRODUIT -->
+    <div id="add-product-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-stone-200">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold text-[#2a1810] flex items-center gap-2">
+                    <i class="fa-solid fa-box-open text-[#c85a32]"></i> Nouveau Produit
+                </h3>
+                <button onclick="closeAddProductModal()" class="text-stone-400 hover:text-stone-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="handleManualAddProduct(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Code ID</label>
+                    <input type="text" id="new-prod-id" required placeholder="Ex: CAF-LAT-10" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Nom du Produit</label>
+                    <input type="text" id="new-prod-name" required placeholder="Ex: Thé à la Menthe" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Catégorie</label>
+                    <input type="text" id="new-prod-cat" required placeholder="Ex: Boissons - Cafés" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Achat (MAD)</label>
+                        <input type="number" step="0.01" id="new-prod-cost" required placeholder="10.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">Prix Vente (MAD)</label>
+                        <input type="number" step="0.01" id="new-prod-sale" required placeholder="25.00" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Stock Initial</label>
+                    <input type="number" id="new-prod-stock" required placeholder="50" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-[#c85a32]">
+                </div>
+                <button type="submit" class="w-full bg-[#c85a32] hover:bg-[#a84624] text-white font-bold py-3 rounded-xl transition shadow mt-3 text-sm">
+                    Enregistrer le Produit
+                </button>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
