@@ -77,6 +77,9 @@
                 <button onclick="switchTab('pos')" id="tab-pos" class="px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md">
                     <i class="fa-solid fa-cash-register"></i> Caisse & Commande
                 </button>
+                <button onclick="switchTab('memories')" id="tab-memories" class="px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]">
+                    <i class="fa-solid fa-camera-retro"></i> Souvenirs
+                </button>
                 <button onclick="switchTab('inventory')" id="tab-inventory" class="px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]">
                     <i class="fa-solid fa-boxes-stacked"></i> Inventaire & Prix
                 </button>
@@ -196,6 +199,30 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE SOUVENIRS CLIENTS ================= -->
+        <section id="page-memories" class="hidden space-y-6">
+            <div class="bg-white/30 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/40 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-stone-900 flex items-center gap-2">
+                        <i class="fa-solid fa-camera-retro text-[#c85a32]"></i>
+                        <span>Galerie Souvenirs & Clients Réguliers</span>
+                    </h2>
+                    <p class="text-sm text-stone-700 font-medium">Déroulez et partagez les photos souvenirs des moments forts avec vos fidèles clients.</p>
+                </div>
+                <div>
+                    <label class="bg-[#c85a32] hover:bg-[#a84624] text-white px-4 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-plus"></i> Ajouter un Souvenir
+                        <input type="file" id="memory-file-input" accept="image/*" class="hidden" onchange="addMemoryPhoto(event)">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Grille des photos souvenirs -->
+            <div id="memories-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Généré dynamiquement en JS -->
             </div>
         </section>
 
@@ -373,8 +400,15 @@
             { id: "GAT-TAR-09", name: "Tartelette Fine aux Fruits de Saison", category: "Pâtisseries & Gâteaux", costPrice: 10, salePrice: 28, stock: 15, image: "Tartelette Fine aux Fruits de Saison.jpg" }
         ];
 
+        const DEFAULT_MEMORIES = [
+            { id: 1, title: "Pause Café entre Amis", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600", date: "2024-02-15" },
+            { id: 2, title: "Client Récurant M. Amine", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600", date: "2024-02-20" }
+        ];
+
         let products = JSON.parse(localStorage.getItem('tifaouin_products')) || DEFAULT_PRODUCTS;
         let sales = JSON.parse(localStorage.getItem('tifaouin_sales')) || [];
+        let memories = JSON.parse(localStorage.getItem('tifaouin_memories')) || DEFAULT_MEMORIES;
+
         let cart = [];
         let activeCategory = "Toutes";
         let editingOrderId = null;
@@ -385,6 +419,7 @@
             renderCart();
             renderInventoryTable();
             renderSalesTable();
+            renderMemories();
             calculateKPIs(sales);
         });
 
@@ -446,31 +481,40 @@
 
             if (confirm("Voulez-vous vraiment réinitialiser toutes les données et images par défaut ?")) {
                 products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+                memories = JSON.parse(JSON.stringify(DEFAULT_MEMORIES));
                 localStorage.setItem('tifaouin_products', JSON.stringify(products));
+                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
                 renderCategories();
                 renderProducts();
                 renderInventoryTable();
+                renderMemories();
                 alert("Les données et chemins d'images ont été réinitialisés !");
             }
         }
 
         function switchTab(tabName) {
-            if (currentUser && currentUser.role === 'serveur' && tabName !== 'pos') {
+            if (currentUser && currentUser.role === 'serveur' && (tabName === 'inventory' || tabName === 'reports')) {
                 alert("Accès réservé au patron.");
                 return;
             }
 
             document.getElementById('page-pos').classList.add('hidden');
+            document.getElementById('page-memories').classList.add('hidden');
             document.getElementById('page-reports').classList.add('hidden');
             document.getElementById('page-inventory').classList.add('hidden');
 
             document.getElementById('tab-pos').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]";
+            document.getElementById('tab-memories').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]";
             document.getElementById('tab-inventory').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]";
             document.getElementById('tab-reports').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 text-amber-200/90 hover:bg-[#3d2418]";
 
             if (tabName === 'pos') {
                 document.getElementById('page-pos').classList.remove('hidden');
                 document.getElementById('tab-pos').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
+            } else if (tabName === 'memories') {
+                document.getElementById('page-memories').classList.remove('hidden');
+                document.getElementById('tab-memories').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
+                renderMemories();
             } else if (tabName === 'reports') {
                 document.getElementById('page-reports').classList.remove('hidden');
                 document.getElementById('tab-reports').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
@@ -479,6 +523,62 @@
                 document.getElementById('page-inventory').classList.remove('hidden');
                 document.getElementById('tab-inventory').className = "px-5 py-2 rounded-lg font-bold text-sm transition flex items-center gap-2 bg-[#c85a32] text-white shadow-md";
                 renderInventoryTable();
+            }
+        }
+
+        /* --- SOUVENIRS FUNCTIONS --- */
+        function renderMemories() {
+            const container = document.getElementById('memories-grid');
+            if (memories.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-stone-700 font-bold bg-white/30 backdrop-blur-md rounded-2xl border border-white/40">Aucune photo souvenir ajoutée.</div>`;
+                return;
+            }
+
+            container.innerHTML = memories.map(m => `
+                <div class="bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl overflow-hidden shadow-md group relative flex flex-col justify-between">
+                    <div class="h-56 w-full overflow-hidden bg-stone-100">
+                        <img src="${m.image}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div class="p-3 bg-white/60 flex justify-between items-center border-t border-white/30">
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm">${m.title}</h4>
+                            <span class="text-[10px] text-stone-600 font-semibold">${m.date}</span>
+                        </div>
+                        <button onclick="deleteMemory(${m.id})" class="text-red-500 hover:text-red-700 p-1 rounded-lg transition" title="Supprimer la photo">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addMemoryPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const title = prompt("Titre ou Nom du Client / Événement :", "Client Régulier");
+            if (!title) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newMemory = {
+                    id: Date.now(),
+                    title: title,
+                    image: e.target.result,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                memories.unshift(newMemory);
+                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
+                renderMemories();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteMemory(id) {
+            if (confirm("Voulez-vous supprimer ce souvenir ?")) {
+                memories = memories.filter(m => m.id !== id);
+                localStorage.setItem('tifaouin_memories', JSON.stringify(memories));
+                renderMemories();
             }
         }
 
@@ -834,7 +934,7 @@
             const avg = count > 0 ? totalCA / count : 0;
 
             document.getElementById('kpi-ca').innerText = totalCA.toFixed(2) + " MAD";
-            document.getElementById('kpi-[#orders]').innerText = count;
+            document.getElementById('kpi-orders').innerText = count;
             document.getElementById('kpi-avg').innerText = avg.toFixed(2) + " MAD";
         }
 
