@@ -1049,51 +1049,60 @@
         }
 
         function importExcelProducts(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const rows = XLSX.utils.sheet_to_json(worksheet);
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(worksheet);
 
-                    let importedCount = 0;
+            let importedCount = 0;
 
-                    rows.forEach(row => {
-                        // Correspondance des en-têtes Excel (ex: ID, Produit, Categorie, PrixAchat, PrixVente, Stock)
-                        const id = String(row.ID || row.Code || row.id || `PROD-${Date.now()}-${Math.floor(Math.random()*100)}`);
-                        const name = row.Produit || row.Nom || row.name || "Produit sans nom";
-                        const category = row.Categorie || row.Category || row.category || "Général";
-                        const costPrice = parseFloat(row.PrixAchat || row.costPrice || 0);
-                        const salePrice = parseFloat(row.PrixVente || row.salePrice || 0);
-                        const stock = parseInt(row.Stock || row.stock || 0);
-
-                        const existingIndex = products.findIndex(p => p.id === id);
-                        if (existingIndex !== -1) {
-                            products[existingIndex] = { ...products[existingIndex], name, category, costPrice, salePrice, stock };
-                        } else {
-                            products.unshift({ id, name, category, costPrice, salePrice, stock, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400" });
-                        }
-                        importedCount++;
-                    });
-
-                    localStorage.setItem('tifaouin_products', JSON.stringify(products));
-                    renderCategories();
-                    renderProducts();
-                    renderInventoryTable();
-                    alert(`${importedCount} produit(s) importé(s) / mis à jour avec succès depuis Excel !`);
-                } catch (err) {
-                    alert("Erreur lors de la lecture du fichier Excel. Vérifiez la structure de votre fichier.");
-                    console.error(err);
+            rows.forEach(row => {
+                // Lecture avec prise en compte du format exact de votre catalogue Excel
+                const id = String(
+                    row.ID_Produit || row.ID || row.Code || row.id || 
+                    `PROD-${Date.now()}-${Math.floor(Math.random()*100)}`
+                );
+                const name = row.Nom_Produit || row.Produit || row.Nom || row.name || "Produit sans nom";
+                const category = row.Categorie || row.Category || row.category || "Général";
+                const costPrice = parseFloat(row.Prix_Achat_MAD || row.PrixAchat || row.costPrice || 0);
+                const salePrice = parseFloat(row.Prix_Vente_MAD || row.PrixVente || row.salePrice || 0);
+                const stock = parseInt(row.Stock_Initial || row.Stock || row.stock || 0);
+                
+                // Image : conserve l'image par défaut si c'est un nom de fichier local au lieu d'une URL
+                let image = "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400";
+                if (row.Lien_Image_Catalogue && String(row.Lien_Image_Catalogue).startsWith('http')) {
+                    image = row.Lien_Image_Catalogue;
                 }
-            };
-            reader.readAsArrayBuffer(file);
-            event.target.value = '';
+
+                const existingIndex = products.findIndex(p => p.id === id);
+                if (existingIndex !== -1) {
+                    products[existingIndex] = { ...products[existingIndex], name, category, costPrice, salePrice, stock, image };
+                } else {
+                    products.unshift({ id, name, category, costPrice, salePrice, stock, image });
+                }
+                importedCount++;
+            });
+
+            localStorage.setItem('tifaouin_products', JSON.stringify(products));
+            renderCategories();
+            renderProducts();
+            renderInventoryTable();
+            alert(`${importedCount} produit(s) importé(s) / mis à jour avec succès depuis Excel !`);
+        } catch (err) {
+            alert("Erreur lors de la lecture du fichier Excel. Vérifiez la structure de votre fichier.");
+            console.error(err);
         }
+    };
+    reader.readAsArrayBuffer(file);
+    event.target.value = '';
+}
     </script>
 
 <!-- MODAL AJOUT MANUEL PRODUIT -->
