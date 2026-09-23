@@ -1,4 +1,5 @@
 🍹 Application de Caisse - TIFAOUIN
+
 TIFAOUIN est une application de caisse enregistreuse moderne, rapide et intuitive conçue spécialement pour la gestion des ventes de boissons, jus frais et snacks.
 
 ✨ Fonctionnalités Principales
